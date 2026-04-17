@@ -1,0 +1,288 @@
+import React, { useState } from "react";
+import styles from "../../styles/styles";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  AiFillHeart,
+  AiOutlineHeart,
+  AiOutlineMessage,
+  AiOutlineShoppingCart,
+} from "react-icons/ai";
+
+function ProductDetail({ data }) {
+  const [count, setCount] = useState(1);
+  const [click, setClick] = useState(false);
+  const [select, setSelect] = useState(0);
+  const navigate = useNavigate();
+  const incrementCount = () => {
+    setCount(count + 1);
+  };
+  const decrementCount = () => {
+    if (count > 1) {
+      setCount(count - 1);
+    }
+  };
+  const handleSubmitMessage = () => {
+    navigate("/indox?conversation=5ddfer378rhe2");
+  };
+  return (
+    <div className="bg-white">
+      {data ? (
+        <div className={`${styles.section} w-[90%] 800px:w-[80%]`}>
+          <div className="w-full py-5">
+            <div className="block w-full 800px:flex">
+              <div className="w-full 800px:w-[50%]">
+                <img
+                  src={data.image_Url[select].url}
+                  alt=""
+                  className="w-[80%]"
+                />
+                <div className="w-full flex">
+                  <div
+                    className={`${select === 0 ? "border" : "null"} cursor-pointer`}
+                  >
+                    <img
+                      src={data?.image_Url[0].url}
+                      alt=""
+                      className="h-[200px]"
+                      onClick={() => setSelect(0)}
+                    />
+                  </div>
+                  <div
+                    className={`${select === 1 ? "border" : "null"} cursor-pointer`}
+                  >
+                    <img
+                      src={data?.image_Url[1].url}
+                      alt=""
+                      className="h-[200px]"
+                      onClick={() => setSelect(1)}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="w-full 800px:w-[50%] pt-5">
+                <h1 className={`${styles.productTitle}`}>{data.name}</h1>
+                <p>{data.description}</p>
+                <div className="flex pt-3">
+                  <h4 className={`${styles.productDiscountPrice}`}>
+                    {data.discount_price}$
+                  </h4>
+                  <h3 className={`${styles.price}`}>
+                    {data.price ? data.price + "$" : null}
+                  </h3>
+                </div>
+                <div className="flex pr-3 mt-12 items-center justify-between">
+                  <div>
+                    <button
+                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      onClick={decrementCount}
+                    >
+                      -
+                    </button>
+                    <span className="bg-gray-200 text-gray-800 font-medium px-4 py-[11px]">
+                      {count}
+                    </span>
+                    <button
+                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      onClick={incrementCount}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <div>
+                    {click ? (
+                      <AiFillHeart
+                        size={30}
+                        onClick={() => setClick(!click)}
+                        className="cursor-pointer"
+                        color={`${click ? "red" : "#333"}`}
+                        title="Remove from wishlist"
+                      />
+                    ) : (
+                      <AiOutlineHeart
+                        size={30}
+                        onClick={() => setClick(!click)}
+                        className="cursor-pointer"
+                        color={`${click ? "red" : "#333"}`}
+                        title="Add to wishlist"
+                      />
+                    )}
+                  </div>
+                </div>
+                <div
+                  className={`${styles.button} !mt-6 !h-11 !rounded flex items-center`}
+                >
+                  <span className="text-white flex items-center">
+                    Add to cart <AiOutlineShoppingCart className="ml-1" />
+                  </span>
+                </div>
+                <div className="flex items-center pb-8">
+                  <img
+                    src={data.shop.shop_avatar.url}
+                    alt=""
+                    className="h-[50px] w-[50px] mr-2 rounded-full"
+                  />
+                  <div className="pr-8">
+                    <h3 className={`${styles.shop_name} pb-1 pt-1`}>
+                      {data.shop.name}
+                    </h3>
+                    <h5 className="pb-3 text-[15px]">
+                      ({data.shop.ratings}) Ratings
+                    </h5>
+                  </div>
+                  <div
+                    onClick={handleSubmitMessage}
+                    className={`${styles.button} bg-[#6443d1] mt-4 !rounded !h-11`}
+                  >
+                    <span className="text-white flex items-center">
+                      Send Message <AiOutlineMessage className="ml-1" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ProductDetailInfo data={data} />
+          <br />
+          <br />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+const ProductDetailInfo = ({ data }) => {
+  const [active, setActive] = useState(1);
+  return (
+    <div className="bg-[#f5f6fb] px-3 800px:px-10 rounded ">
+      <div className="w-full flex justify-between border-b pt-10 pb-2">
+        <div className="relative">
+          <h5
+            onClick={() => setActive(1)}
+            className="text-[18px] text-[#000] px-1 leading-5 font-[600] cursor-pointer 800px:font-[20px]"
+          >
+            Product Details
+          </h5>
+          {active === 1 ? (
+            <div className={`${styles.active_indicator}`} />
+          ) : null}
+        </div>
+        <div className="relative">
+          <h5
+            onClick={() => setActive(2)}
+            className="text-[18px] text-[#000] px-1 leading-5 font-[600] cursor-pointer 800px:font-[20px]"
+          >
+            Product Reviews
+          </h5>
+          {active === 2 ? (
+            <div className={`${styles.active_indicator}`} />
+          ) : null}
+        </div>
+        <div className="relative">
+          <h5
+            onClick={() => setActive(3)}
+            className="text-[18px] text-[#000] px-1 leading-5 font-[600] cursor-pointer 800px:font-[20px]"
+          >
+            Seller Information
+          </h5>
+          {active === 3 ? (
+            <div className={`${styles.active_indicator}`} />
+          ) : null}
+        </div>
+      </div>
+      {active === 1 ? (
+        <>
+          <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
+            The iPhone 13 Pro Max was unveiled at Apple's Special Event on
+            September 14, 2021, and became available on September 24, 2021.
+            Wikipedia The device measures 78.1 x 160.8 x 7.65 mm and weighs 240
+            g, featuring a stunning 6.7-inch OLED display with a resolution of
+            1284 x 2778 pixels. DeviceSpecifications The display supports a
+            variable 10–120 Hz ProMotion refresh rate, which can go as low as 10
+            Hz to preserve battery life, and reaches a peak brightness of up to
+            1,200 nits. Wikipedia The iPhone 13 Pro Max is available in five
+            colors: Silver, Graphite, Gold, Sierra Blue, and Alpine Green.
+            Wikipedia Additionally, it carries an IP68 water resistance rating,
+            meaning it can withstand submersion up to 6 meters for up to 30
+            minutes.
+          </p>
+          <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
+            The iPhone 13 Pro Max introduced the biggest camera upgrade in
+            iPhone history, including Cinematic Mode for rack focus video at
+            1080p 30 fps, and Apple ProRes video recording. Wikipedia The rear
+            camera system includes a 3x telephoto lens and a LiDAR scanner,
+            along with an improved ultra-wide camera for better low-light
+            photography. Phone Scoop On the battery front, the iPhone 13 Pro Max
+            is equipped with a 4,352 mAh battery, offering 2.5 more hours of
+            usage compared to its predecessor. Wikipedia It supports fast
+            charging at 20W (reaching 50% in about 30 minutes), MagSafe wireless
+            charging at 15W, and Qi wireless charging at 7.5W, with up to 28
+            hours of standby time and up to 95 hours of music playback
+          </p>
+          <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
+            The iPhone 13 Pro Max is powered by Apple's A15 Bionic processor,
+            which features a 16-core neural engine, a 6-core CPU with 2
+            performance cores and 4 efficiency cores, and a 5-core GPU.
+            Wikipedia The chip is paired with 6 GB of RAM and is available in
+            storage options of 128 GB, 256 GB, 512 GB, and 1 TB.
+            DeviceSpecifications The device supports 5G connectivity for fast
+            wireless speeds, and connects via Wi-Fi 6 (802.11ax), Bluetooth 5.0,
+            and supports GPS, A-GPS, GLONASS, Galileo, and QZSS positioning
+            systems
+          </p>
+        </>
+      ) : null}
+      {active === 2 ? (
+        <div className="w-full flex items-center justify-center min-h-[40vh]">
+          <p>No Reviews yet!</p>
+        </div>
+      ) : null}
+      {active === 3 && (
+        <div className="w-full block 800px:flex p-5">
+          <div className="w-full 800px:w-[50%]">
+            <div className="flex items-center">
+              <img
+                src={`${data.shop.shop_avatar.url}`}
+                className="w-[50px] h-[50px] rounded-full"
+                alt=""
+              />
+              <div className="pl-3">
+                <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
+                <h5 className="pb-3 text-[15px]">
+                  ({data.shop.ratings}) Ratings
+                </h5>
+              </div>
+            </div>
+            <p className="pt-2">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. At iusto
+              aut nisi alias fugiat eligendi? Aliquam, sunt voluptatem
+              perspiciatis harum nihil alias vel aliquid labore, minima
+              repudiandae officia minus fugiat.
+            </p>
+          </div>
+          <div className="w-full 800px:w-[50%] mt-5 800px:mt-0 800px:flex flex-col items-end">
+            <div className="text-left">
+              <h5 className="font-[600]">
+                Joined on <span className="font-[500]">13 March,2026</span>
+              </h5>
+              <h5 className="font-[600] pt-3">
+                Total Products <span className="font-[500]">1,745</span>
+              </h5>
+              <h5 className="font-[600] pt-3">
+                Total Reviews <span className="font-[500]">1,223</span>
+              </h5>
+              <Link to="/">
+                <div
+                  className={`${styles.button} !rounded-[4px] mt-3 !h-[39.5px]`}
+                >
+                  <h4 className="text-white">Visit Shop</h4>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ProductDetail;

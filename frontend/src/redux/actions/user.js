@@ -1,0 +1,46 @@
+import axios from "axios";
+import { server } from "../../server";
+
+export const loadUser = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: "LoadUserRequest",
+    });
+
+    const { data } = await axios.get(`${server}/user/getuser`, { 
+      withCredentials: true 
+    });
+
+    dispatch({
+      type: "LoadUserSuccess", // Fixed typo: Success
+      payload: data.user,      // Fixed typo: payload
+    });
+  } catch (error) {
+    dispatch({
+      type: "LoadUserFail",
+      payload: error.response?.data?.message || "An error occurred",
+    });
+  }
+};
+
+export const loadSeller = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: "LoadSellerRequest",
+    });
+
+    const { data } = await axios.get(`${server}/shop/getSeller`, { 
+      withCredentials: true 
+    });
+     
+    dispatch({
+      type: "LoadSellerSuccess", // Fixed typo: Success
+      payload: data.seller,      // Fixed typo: payload
+    });
+  } catch (error) {
+    dispatch({
+      type: "LoadSellerFail",
+      payload: error.response?.data?.message || "An error occurred",
+    });
+  }
+};
