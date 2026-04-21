@@ -16,7 +16,7 @@ function ShopLogin() {
      await axios.post(`${server}/shop/login-shop` , {email , password}  ).then((res)=>{
          toast.success("Login Successfully!");
         //  console.log(res.data);
-        //  navigate("/");
+         navigate("/dashboard");
         window.location.reload(true);
      }).catch((err)=>{
         toast.error(err.response.data.message);

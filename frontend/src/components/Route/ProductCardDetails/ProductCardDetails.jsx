@@ -8,6 +8,7 @@ import {
   AiOutlineHeart,
   AiOutlineShoppingCart,
 } from "react-icons/ai";
+import { backend_url } from "../../../server";
 const ProductCardDetails = ({ setOpen, data }) => {
   const [click, setClick] = useState(false);
   // const [select ,setSelect]=useState(false);
@@ -34,10 +35,13 @@ const ProductCardDetails = ({ setOpen, data }) => {
             />
             <div className="block w-full 800px:flex">
               <div className="w-full 800px:w-[50%]">
-                <img src={data.image_Url[0].url} alt="" />
+                <img
+                  src={`${backend_url}${data.images && data.images[0]}`}
+                  alt=""
+                />
                 <div className="flex">
                   <img
-                    src={data.shop.shop_avatar.url}
+                    src={`${backend_url}${data.shop.avatar}`}
                     alt=""
                     className="h-[50px] w-[50px] rounded-full mr-2"
                   />

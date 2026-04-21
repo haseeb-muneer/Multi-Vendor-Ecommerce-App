@@ -3,7 +3,10 @@ const ErrorHnadler = require("./middleware/error");
 const cookieParser=require("cookie-parser");
 const bodyParser=require("body-parser");
 const user=require("./controller/User");
+const event=require("./controller/Event");
 const shop=require("./controller/Shop");
+const product=require("./controller/Product");
+const coupounCode=require("./controller/CoupounCode");
 const cors=require("cors");
 const app = express();
 const path =require("path");
@@ -22,6 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true , limit:"50mb" }));
 app.use(cookieParser());
 app.use("/api/v2/user",user);
 app.use("/api/v2/shop",shop);
+app.use("/api/v2/product",product);
+app.use("/api/v2/event",event);
+app.use("/api/v2/coupoun",coupounCode);
 
 // config
 if (process.env.NODE_ENV !== "production") {

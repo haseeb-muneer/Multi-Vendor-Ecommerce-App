@@ -4,31 +4,27 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer, Bounce } from 'react-toastify'; // Added Bounce here
 import 'react-toastify/dist/ReactToastify.css'; // Added the CSS import
 import axios from "axios";
-import { LoginPage, SignupPage, ActivationPage , HomePage , ProductPage , BestSellingPage , EventPage , FAQPage , ProductDetailsPage  , ProfilePage , ShopCreatePage , SellerActivationPage  , ShopLoginPage} from "./Routes";
-import { ShopHomePage } from "./ShopRoutes";
+import { LoginPage, SignupPage, ActivationPage , HomePage , ProductPage , BestSellingPage , EventPage , FAQPage , ProductDetailsPage  , ProfilePage , ShopCreatePage , SellerActivationPage  , ShopLoginPage} from "./routes/Routes";
+import { ShopHomePage  , ShopCreateProduct , ShopAllProduct , ShopCreateEvents , ShopAllEvents , ShopAllCoupouns} from "./routes/ShopRoutes";
+import { ShopDashboardPage } from "./routes/ShopRoutes";
 import { server } from "./server";
 import { toast } from 'react-toastify';
 import store from "./redux/store";
 import { loadSeller, loadUser } from "./redux/actions/user";
 import {useSelector} from "react-redux";
-import ProtectedRoute from "./ProtectedRoute";
-import SellerProtectedRoute from "./SellerProtectedRoute"
+import ProtectedRoute from "./routes/ProtectedRoute";
+import SellerProtectedRoute from "./routes/SellerProtectedRoute"
 function App() {
-  const { loading , isAuthenticated} = useSelector((state) => state.user);//user is the reducer name of userReducer
-  const { seller , isSeller , isLoading} = useSelector((state) => state.seller);//seller is the reducer name of sellerReducer
+  
   axios.defaults.withCredentials = true;
   useEffect(()=>{
     store.dispatch(loadUser());
     store.dispatch(loadSeller());
-    if(isSeller===true){
-      return <Navigate to="/shop" replace/>
-    }
+   
   },[])
-  console.log( "seller is", isSeller , seller);
+  // console.log( "seller is", isSeller , seller);
   return (
-   <>
-   {
-    loading || isLoading ? (null):(
+   
        <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -48,15 +44,45 @@ function App() {
         <Route path="/events" element={<EventPage/>}/>
         <Route path="/faq" element={<FAQPage/>}/>
         <Route path="/profile" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <ProtectedRoute >
             <ProfilePage/>
           </ProtectedRoute>
         }/>
         <Route path="/shop-create" element={<ShopCreatePage/>}/>
         <Route path="/shop-login" element={<ShopLoginPage />} />
         <Route path="/shop/:id" element={
-          <SellerProtectedRoute isSeller={isSeller}>
+          <SellerProtectedRoute >
             <ShopHomePage/>
+          </SellerProtectedRoute>
+        } />
+        <Route path="/dashboard" element={
+          <SellerProtectedRoute >
+            <ShopDashboardPage/>
+          </SellerProtectedRoute>
+        } />
+        <Route path="/dashboard-create-product" element={
+          <SellerProtectedRoute >
+            <ShopCreateProduct/>
+          </SellerProtectedRoute>
+        } />
+        <Route path="/dashboard-products" element={
+          <SellerProtectedRoute >
+            <ShopAllProduct/>
+          </SellerProtectedRoute>
+        } />
+        <Route path="/dashboard-create-event" element={
+          <SellerProtectedRoute >
+            <ShopCreateEvents/>
+          </SellerProtectedRoute>
+        } />
+        <Route path="/dashboard-events" element={
+          <SellerProtectedRoute >
+            <ShopAllEvents/>
+          </SellerProtectedRoute>
+        } />
+        <Route path="/dashboard-coupouns" element={
+          <SellerProtectedRoute >
+            <ShopAllCoupouns/>
           </SellerProtectedRoute>
         } />
       </Routes>
@@ -74,8 +100,7 @@ function App() {
         transition={Bounce}
       />
     </BrowserRouter>
-    )
-   }</>
+  
   );
 }
 
