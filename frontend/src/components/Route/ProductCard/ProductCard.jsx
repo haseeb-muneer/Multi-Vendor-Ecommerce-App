@@ -11,7 +11,7 @@ import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
 import { backend_url } from "../../../server";
-
+function handleAddtoCart() {}
 function ProductCard({ data }) {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
@@ -65,7 +65,8 @@ function ProductCard({ data }) {
       <div className="py-2 flex items-center justify-between">
         <div className="flex">
           <h5 className={`${styles.productDiscountPrice}`}>
-            {data.originalPrice === 0 ? data.originalPrice : data.discountPrice}$
+            {data.originalPrice === 0 ? data.originalPrice : data.discountPrice}
+            $
           </h5>
           <h4 className={`${styles.price}`}>
             {data.originalPrice ? data.originalPrice + "$" : null}
@@ -103,14 +104,12 @@ function ProductCard({ data }) {
         />
         <AiOutlineShoppingCart
           size={25}
-          onClick={() => setOpen(!open)}
+          onClick={handleAddtoCart}
           className="absolute top-24 right-2"
           color="#444"
           title="Add to cart"
         />
-        {
-            open ? <ProductCardDetails data={data} setOpen={setOpen}/> : null
-        }
+        {open ? <ProductCardDetails data={data} setOpen={setOpen} /> : null}
       </div>
     </div>
   );

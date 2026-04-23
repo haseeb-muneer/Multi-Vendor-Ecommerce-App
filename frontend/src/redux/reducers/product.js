@@ -23,7 +23,7 @@ export const productReducers = createReducer(initialState, (builder) => {
     })
 // is these two states aredifferennt
 // state.products are for stroign trhe all products and responsible for get all Shop products
-    // get all products reducers
+    // get all products of shop
      .addCase("getAllProductsShopRequest", (state) => {
       state.isLoading = true;
     
@@ -50,6 +50,24 @@ export const productReducers = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.message=action.payload;
     })
+    // get all products simple with out shop
+    .addCase('getAllProductsRequest', (state) => {
+        state.isLoading = true;
+      })
+      // This replaces getAllProductsSuccess
+      .addCase('getAllProductsSuccess', (state, action) => {
+        state.isLoading = false;
+        state.allProducts = action.payload;
+      })
+      // This replaces getAllProductsFailed
+      .addCase('getAllProductsFailed', (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+
+
+
+
     .addCase("clearError", (state) => {
       state.error = null;
     });

@@ -15,9 +15,9 @@ function Login() {
      e.preventDefault();
      await axios.post(`${server}/user/login-user` , {email , password}  ).then((res)=>{
         toast.success("Login Successfully!");
+        navigate("/");
         window.location.reload(true);
         console.log(res.data);
-        navigate("/");
      }).catch((err)=>{
         toast.error(err.response.data.message);
         console.log(err.response.data.message);

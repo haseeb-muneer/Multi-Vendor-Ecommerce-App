@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 import styles from "../../../styles/styles";
+import {Link} from "react-router-dom";
 import {
   AiOutlineMessage,
   AiFillHeart,
@@ -9,11 +10,12 @@ import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
 import { backend_url } from "../../../server";
+import { useSelector } from "react-redux";
 const ProductCardDetails = ({ setOpen, data }) => {
   const [click, setClick] = useState(false);
   // const [select ,setSelect]=useState(false);
   const [count, setCount] = useState(1);
-
+  const {seller}=useSelector((state)=>state.seller);
   const HandleMessageSubmit = () => {};
   const decrementCount = () => {
     if (count > 1) {
@@ -40,8 +42,9 @@ const ProductCardDetails = ({ setOpen, data }) => {
                   alt=""
                 />
                 <div className="flex">
+                  <Link to={`/shop/${seller?._id}`}>
                   <img
-                    src={`${backend_url}${data.shop.avatar}`}
+                    src={`${backend_url}${data.shop?.avatar}`}
                     alt=""
                     className="h-[50px] w-[50px] rounded-full mr-2"
                   />
@@ -51,6 +54,7 @@ const ProductCardDetails = ({ setOpen, data }) => {
                       ({data.shop.ratings}) Ratings
                     </h5>
                   </div>
+                  </Link>
                 </div>
                 <div
                   className={`${styles.button} bg-[#000] mt-4 rounded-[4px] h-11`}
@@ -62,7 +66,7 @@ const ProductCardDetails = ({ setOpen, data }) => {
                 </div>
                 <div>
                   <h5 className="text-[16px] text-[red] mt-5">
-                    ({data.total_sell}) Sold out
+                    ({data.sold_out}) Sold out
                   </h5>
                 </div>
               </div>
@@ -73,10 +77,10 @@ const ProductCardDetails = ({ setOpen, data }) => {
                 <p>{data.description}</p>
                 <div className="flex pt-3">
                   <h4 className={`${styles.productDiscountPrice}`}>
-                    {data.discount_price}$
+                    {data.discountPrice}$
                   </h4>
                   <h3 className={`${styles.price}`}>
-                    {data.price ? data.price + "$" : null}
+                    {data.originalPrice ? data.originalPrice + "$" : null}
                   </h3>
                 </div>
                 <div className="flex pr-3 mt-12 items-center justify-between">

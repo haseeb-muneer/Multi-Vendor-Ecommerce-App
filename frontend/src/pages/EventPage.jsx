@@ -8,7 +8,7 @@ function EventPage() {
     <div>
         <Header activeHeading={4}/>
         <EventCard active={true}/>
-        <EventCard active={true}/>
+       
         <Footer/>
     </div>
   )
