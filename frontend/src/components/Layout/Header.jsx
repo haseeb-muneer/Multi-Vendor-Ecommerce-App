@@ -24,6 +24,9 @@ function Header({ activeHeading }) {
   // console.log(user);
   // console.log(`${backend_url}${user.avatar}`);
   console.log(isAuthenticated);
+  const {cart}=useSelector((state)=>state.cart);
+  const {wishlist}=useSelector((state)=>state.wishlist);
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
@@ -143,7 +146,7 @@ function Header({ activeHeading }) {
               >
                 <AiOutlineHeart size={30} color="rgb(255 255 255/83%)" />
                 <span className="absolute top-0 right-0 rounded-full bg-[#3bc177] w-4 h-4 top right text-white font-mono text-[12px] leading-tight text-center ">
-                  0
+                  {wishlist && wishlist.length}
                 </span>
               </div>
             </div>
@@ -155,7 +158,7 @@ function Header({ activeHeading }) {
                   onClick={() => setOpenCart(true)}
                 />
                 <span className="absolute top-0 right-0 rounded-full bg-[#3bc177] w-4 h-4 top right text-white font-mono text-[12px] leading-tight text-center ">
-                  1
+                  {cart && cart.length}
                 </span>
               </div>
             </div>
@@ -209,7 +212,7 @@ function Header({ activeHeading }) {
             <div className="relative mr-[20px]">
               <AiOutlineShoppingCart size={30} />
               <span className="absolute top-0 right-0 rounded-full bg-[#3bc177] w-4 h-4 top right text-white font-mono text-[12px] leading-tight text-center ">
-                1
+                {cart && cart.length}
               </span>
             </div>
           </div>
