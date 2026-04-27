@@ -1,23 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { backend_url } from "../../server";
-import { AiOutlineArrowRight, AiOutlineCamera, AiOutlineDelete } from "react-icons/ai";
+import {
+  AiOutlineArrowRight,
+  AiOutlineCamera,
+  AiOutlineDelete,
+} from "react-icons/ai";
 import { MdOutlineTrackChanges } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { updateuserInfo } from "../../redux/actions/user";
+import { toast } from "react-toastify";
+import axios from "axios";
+import {server} from "../../server";
 const ProfileContent = ({ active, setActive }) => {
-  const { user } = useSelector((state) => state.user);
-  const [name, setName] = useState(user && user.fullName);
+  const { user, error } = useSelector((state) => state.user);
+  const [fullName, setFullName] = useState(user && user.fullName);
   const [email, setEmail] = useState(user && user.email);
-  const [phoneNumber, setPhoneNumber] = useState();
-  const [zipCode, setZipCode] = useState();
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(user && user.phoneNumber);
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const [avatar , setAvatar]=useState();
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch({ type: "clearError" });
+    }
+  }, [error]);
   const handleSubmit = (e) => {
     e.preventDefault();
+    dispatch(updateuserInfo({ fullName, email, phoneNumber, password }));
   };
+  const handleImage=async(e)=>{
+   const file=e.target.files[0];
+   setAvatar(file);
+   const formData=new FormData();
+   formData.append("image" ,e.target.files[0] );
+   await axios.put(`${server}/user/update-avatar` , formData , {
+    headers:{
+      "Content-Type":"multipart/form-data",
+    },
+    withCredentials:true,
+   }).then((res)=>{
+    window.location.reload();
+   }).catch((error)=>{
+    toast.error(error);
+   })
+  }
   return (
     <div className="w-full">
       {/* Profile */}
@@ -31,7 +62,15 @@ const ProfileContent = ({ active, setActive }) => {
                 alt=""
               />
               <div className="w-[30px] h-[30px] bg-[#E3E9EE] rounded-full flex items-center justify-center absolute bottom-[5px] right-[5px] cursor-pointer">
-                <AiOutlineCamera />
+                <input
+                  type="file"
+                  id="image"
+                  className="hidden"
+                  onChange={handleImage}
+                />
+                <label htmlFor="image">
+                  <AiOutlineCamera />
+                </label>
               </div>
             </div>
           </div>
@@ -46,8 +85,8 @@ const ProfileContent = ({ active, setActive }) => {
                     type="text"
                     className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
                     required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                   />
                 </div>
                 <div className="800px:w-[50%] w-[100%]">
@@ -60,8 +99,8 @@ const ProfileContent = ({ active, setActive }) => {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
-                </div>
-                <div className="w-full 800px:flex block pb-3">
+              </div>
+              <div className="w-full 800px:flex block pb-3">
                 <div className="800px:w-[50%] w-[100%]">
                   <label className="block pb-2">Phone Number</label>
                   <input
@@ -73,48 +112,25 @@ const ProfileContent = ({ active, setActive }) => {
                   />
                 </div>
                 <div className="800px:w-[50%] w-[100%]">
-                  <label className="block pb-2">Zip Code</label>
+                  <label className="block pb-2">Password</label>
                   <input
-                    type="number"
+                    type="password"
                     className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
                     required
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                </div>
-                <div className="w-full 800px:flex block pb-3">
-                <div className="800px:w-[50%] w-[100%]">
-                  <label className="block pb-3">Address 1</label>
-                  <input
-                    type="address"
-                    className={`${styles.input} !w-[95%] mb-4`}
-                    required
-                    value={address1}
-                    onChange={(e) => setAddress1(e.target.value)}
-                  />
-                </div>
-                <div className="800px:w-[50%] w-[100%]">
-                  <label className="block pb-2">Address 2</label>
-                  <input
-                    type="address"
-                    className={`${styles.input} !w-[95%] mb-4`}
-                    required
-                    value={address2}
-                    onChange={(e) => setAddress2(e.target.value)}
-                  />
-                </div>
-                </div>
-             
+              </div>
+
               <input
                 className={`w-[250px] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer`}
                 required
                 value="Update"
                 type="Submit"
-                />
-                
+              />
             </form>
-            </div>
+          </div>
         </>
       )}
       {/* Orders */}
@@ -404,10 +420,13 @@ const PaymentMethod = () => {
           <span className="text-[#fff]">Add New</span>
         </div>
       </div>
-      <br/>
+      <br />
       <div className="w-full bg-white h-[70px] rounded-[4px] flex items-center px-3 shadow justify-between pr-10">
         <div className="flex items-center">
-          <img src="https://bonik-react.vercel.app/assets/images/payment-methods/Visa.svg" alt=""/>
+          <img
+            src="https://bonik-react.vercel.app/assets/images/payment-methods/Visa.svg"
+            alt=""
+          />
           <h5 className="pl-5 font-[600]">Muhammad Haseeb</h5>
         </div>
         <div className="pl-8 flex items-center">
@@ -421,7 +440,7 @@ const PaymentMethod = () => {
     </div>
   );
 };
-const Address=()=>{
+const Address = () => {
   return (
     <div className="w-full px-5">
       <div className="w-full flex items-center justify-between">
@@ -432,18 +451,15 @@ const Address=()=>{
           <span className="text-[#fff]">Add New</span>
         </div>
       </div>
-      <br/>
+      <br />
       <div className="w-full bg-white h-[70px] rounded-[4px] flex items-center px-3 shadow justify-between pr-10">
         <div className="flex items-center">
-          
           <h5 className="pl-5 font-[600]">Default</h5>
         </div>
         <div className="pl-8 flex items-center">
-          
           <h6>456 Erdman Passage, New Zoietown, Paraguay </h6>
         </div>
         <div className="pl-8 flex items-center">
-          
           <h6>(213) 849-9416</h6>
         </div>
         <div className="min-w-[10%] flex items-center justify-between pl-8">
@@ -452,5 +468,5 @@ const Address=()=>{
       </div>
     </div>
   );
-}
+};
 export default ProfileContent;

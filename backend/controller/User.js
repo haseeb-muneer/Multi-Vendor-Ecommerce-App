@@ -140,5 +140,57 @@ router.get("/logout" , isAuthenticated , catchAsyncErrors(async (req,res,next)=>
     }catch(error){
         return next(new ErrorHandler(error.message , 500))
     }
+}));
+router.put(
+  "/update-user-info",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { email, password, phoneNumber, fullName } = req.body;
+
+      const user = await User.findOne({ email }).select("+password");
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 400));
+        // console.log("user does not exist");
+      }
+
+      const isPasswordValid = await user.comparePassword(password);
+
+      if (!isPasswordValid) {
+        return next( new ErrorHandler("Please provide the correct information", 400) );
+        // console.log("password is not correct");
+      }
+
+      user.fullName = fullName;
+      user.email = email;
+      user.phoneNumber = phoneNumber;
+
+      await user.save();
+
+      res.status(201).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+     return next(new ErrorHandler(error.message, 500));
+//    console.log(error);
+    }
+  })
+);
+router.put("/update-avatar", isAuthenticated , upload.single("image"), catchAsyncErrors(async (req,res , next)=>{
+    try{
+      const existUser=await User.findById(req.user.id);
+      const existAvatarPath=`uploads/${existUser.avatar}`;
+      fs.unlinkSync(existAvatarPath);
+      const fileUrl=path.join(req.file.filename);
+      const user=await User.findByIdAndUpdate(req.user.id , {avatar:fileUrl});
+      res.status(200).json({
+        success:true,
+        user,
+      })
+    }catch(error){
+        return next(new ErrorHandler(error.message, 500));
+    }
 }))
 module.exports=router;

@@ -158,15 +158,18 @@ function ProductDetail({ data }) {
                   </span>
                 </div>
                 <div className="flex items-center pb-8">
+                 <Link to={`/shop/${data.shop._id}`}>
                   <img
                     src={`${backend_url}${data?.shop?.avatar}`}
                     alt=""
                     className="h-[50px] w-[50px] mr-2 rounded-full"
-                  />
+                  /></Link>
                   <div className="pr-8">
+                    <Link to={`/shop/${data.shop._id}`}>
                     <h3 className={`${styles.shop_name} pb-1 pt-1`}>
                       {data.shop.name}
                     </h3>
+                    </Link>
                     <h5 className="pb-3 text-[15px]">
                       (4/5) Ratings
                     </h5>

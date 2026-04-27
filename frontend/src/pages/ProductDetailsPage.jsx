@@ -13,21 +13,15 @@ const { allProducts } = useSelector((state) => state.products);
 // console.log(`prodducts included ${products}`);
 // console.log(products);
     const [data,setData]=useState(null);
-        const {name}=useParams();
+        const {id}=useParams();
         // const productName=name.replace(/-/g," ");
        useEffect(() => {
     if (allProducts && allProducts.length > 0) {
-        const foundProduct = allProducts.find((i) => {
-            // Convert the DB name to the same format as the URL
-            const productSlug = i.name.replace(/\s+/g, "-").toLowerCase();
-            const urlSlug = name.toLowerCase();
-            
-            return productSlug === urlSlug;
-        });
+        const data = allProducts.find((i) => i._id===id);
         
-        setData(foundProduct);
+        setData(data);
     }
-}, [allProducts, name]);
+}, [data , allProducts]);
   return (
     <div>
     <Header/>
