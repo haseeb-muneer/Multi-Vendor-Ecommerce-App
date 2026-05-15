@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer, Bounce } from 'react-toastify'; // Added Bounce here
 import 'react-toastify/dist/ReactToastify.css'; // Added the CSS import
 import axios from "axios";
-import { LoginPage, SignupPage, ActivationPage , HomePage , ProductPage , BestSellingPage , EventPage , FAQPage , ProductDetailsPage  , ProfilePage , ShopCreatePage , SellerActivationPage  , ShopLoginPage  } from "./routes/Routes";
+import { LoginPage, SignupPage, ActivationPage , HomePage , ProductPage , BestSellingPage , EventPage , FAQPage , ProductDetailsPage  , ProfilePage , ShopCreatePage , SellerActivationPage  , ShopLoginPage  , CheckoutPage } from "./routes/Routes";
 import { ShopHomePage  , ShopCreateProduct , ShopAllProduct , ShopCreateEvents , ShopAllEvents , ShopAllCoupouns} from "./routes/ShopRoutes";
 import { ShopDashboardPage } from "./routes/ShopRoutes";
 import { server } from "./server";
@@ -89,7 +89,14 @@ function App() {
             <ShopAllCoupouns/>
           </SellerProtectedRoute>
         } />
-        
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <ToastContainer
         position="bottom-center"
