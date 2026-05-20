@@ -13,19 +13,34 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 function Payment() {
-  const [orderData, setOrderData] = useState([]);
+ const [orderData, setOrderData] = useState([]);
   const [open, setOpen] = useState(false);
   const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading , setLoading]=useState();
 
   useEffect(() => {
     const orderData = JSON.parse(localStorage.getItem("latestOrder"));
     setOrderData(orderData);
   }, []);
 
-  const paymentHandler = () => {};
+  const paymentHandler = async (e) => {
+    e.preventDefault();
+  };
+  const cashOnDeliveryHandler = async (e) => {
+    e.preventDefault();
+  };
+  const onApprove=async(data,actions)=>{
 
+  }
+  const paymentData={
+    amount:Math.round(orderData?.totalPrice *100)
+  }
+  const createOrder=()=>{
+
+  }
   return (
     <div className="w-full flex flex-col items-center py-8">
       <div className="w-[90%] 1000px:w-[70%] block 800px:flex">
@@ -34,11 +49,11 @@ function Payment() {
             user={user}
             open={open}
             setOpen={setOpen}
-            // onApprove={onApprove}
-            // createOrder={createOrder}
+            onApprove={onApprove}
+            createOrder={createOrder}
             paymentHandler={paymentHandler}
-            // cashOnDeliveryHandler={cashOnDeliveryHandler}
-            sLoading={isLoading}
+            cashOnDeliveryHandler={cashOnDeliveryHandler}
+            loading={loading}
           />
         </div>
         <div className="w-full 800px:w-[35%] 800px:mt-0 mt-8">
@@ -48,7 +63,14 @@ function Payment() {
     </div>
   );
 }
-const PaymentInfo = ({ user, open, setOpen, paymentHandler, isLoading }) => {
+const PaymentInfo = ({ user,
+            open,
+            setOpen,
+            onApprove,
+            createOrder,
+            paymentHandler,
+            cashOnDeliveryHandler,
+            loading}) => {
   const [select, setSelect] = useState(1);
 
   return (
@@ -154,7 +176,7 @@ const PaymentInfo = ({ user, open, setOpen, paymentHandler, isLoading }) => {
               </div>
               <input
                 type="submit"
-                value={isLoading ? "Processing..." : "Submit"}
+                value={loading ? "Processing..." : "Submit"}
                 className={`${styles.button} !bg-[#f63b60] text-[#fff] h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600]`}
               />
             </form>

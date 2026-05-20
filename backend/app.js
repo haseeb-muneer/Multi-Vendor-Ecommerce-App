@@ -2,13 +2,19 @@ const express = require("express");
 const ErrorHnadler = require("./middleware/error");
 const cookieParser=require("cookie-parser");
 const bodyParser=require("body-parser");
+const cors=require("cors");
+const app = express();
+// config
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config({path:"config/.env"});
+  // require("dotenv").config({ path: path.join(__dirname, "config/.env") });
+}
 const user=require("./controller/User");
 const event=require("./controller/Event");
 const shop=require("./controller/Shop");
 const product=require("./controller/Product");
 const coupounCode=require("./controller/CoupounCode");
-const cors=require("cors");
-const app = express();
+const Payment=require("./controller/Payment");
 const path =require("path");
 app.use("/",express.static("uploads"));
 app.use(cors({
@@ -28,12 +34,8 @@ app.use("/api/v2/shop",shop);
 app.use("/api/v2/product",product);
 app.use("/api/v2/event",event);
 app.use("/api/v2/coupoun",coupounCode);
+app.use("/api/v2/payment",Payment);
 
-// config
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config({path:"config/.env"});
-  // require("dotenv").config({ path: path.join(__dirname, "config/.env") });
-}
 console.log(process.env.DB_URL);
 app.use(ErrorHnadler);
 module.exports=app;

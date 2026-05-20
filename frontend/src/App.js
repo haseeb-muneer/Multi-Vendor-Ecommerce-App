@@ -16,20 +16,45 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import {getAllProducts, getAllProductShop} from  "./redux/actions/product";
 import SellerProtectedRoute from "./routes/SellerProtectedRoute"
 import { getAllEvents } from "./redux/actions/event";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { useState } from "react";
 function App() {
-   
+  const [stripeApikey, setStripeApiKey] = useState("");
+   async function getStripeApikey() {
+    const { data } = await axios.get(`${server}/payment/stripeapikey`);
+    setStripeApiKey(data.stripeApikey);
+    console.log(stripeApikey);
+  }
   axios.defaults.withCredentials = true;
  useEffect(() => {
   store.dispatch(loadUser());
   store.dispatch(loadSeller());
   store.dispatch(getAllProducts());
   store.dispatch(getAllEvents());
+  getStripeApikey()
 }, []);
 
   // console.log( "seller is", isSeller , seller);
   return (
    
        <BrowserRouter>
+          
+          {stripeApikey && (
+        <Elements stripe={loadStripe(stripeApikey)}>
+          <Routes>
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute>
+                  <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Elements>
+      )}
+
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignupPage />} />
@@ -97,14 +122,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/payment"
-          element={
-            <ProtectedRoute>
-              <PaymentPage />
-            </ProtectedRoute>
-          }
-        />
+        
       </Routes>
       <ToastContainer
         position="bottom-center"

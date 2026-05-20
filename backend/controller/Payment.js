@@ -1,34 +1,31 @@
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-export async function processStripePayment(req, res) {
-  try {
-    const myPayment = await stripe?.paymentIntents.create({
+const express = require("express");
+const router = express.Router();
+const catchAsyncErrors = require("../middleware/catchAsyncErrors");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+console.log(process.env.STRIPE_SECRET_KEY);
+router.post(
+  "/process",
+  catchAsyncErrors(async (req, res, next) => {
+    const myPayment = await stripe.paymentIntents.create({
       amount: req.body.amount,
       currency: "usd",
       metadata: {
         company: "HB Services",
       },
     });
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       client_secret: myPayment.client_secret,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
-  }
-}
+  })
+);
 
-export async function getStripeApiKey(req, res) {
-  try {
-    res.status(200).json({
-      success: true,
-      stripeApiKey: process.env.STRIPE_API_KEY,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "INTERNAL SERVER ERROR!" });
-  }
-}
+router.get(
+  "/stripeapikey",
+  catchAsyncErrors(async (req, res, next) => {
+    res.status(200).json({ stripeApikey: process.env.STRIPE_API_KEY });
+  })
+);
+
+
+module.exports = router;
