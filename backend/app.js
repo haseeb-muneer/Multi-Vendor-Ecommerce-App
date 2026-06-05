@@ -15,10 +15,11 @@ const shop=require("./controller/Shop");
 const product=require("./controller/Product");
 const coupounCode=require("./controller/CoupounCode");
 const Payment=require("./controller/Payment");
+const order=require("./controller/order");
 const path =require("path");
 app.use("/",express.static("uploads"));
 app.use(cors({
-  origin: "http://localhost:3000", // Allow ONLY your frontend
+  origin: "http://localhost:3001", // Allow ONLY your frontend
   credentials: true,                // MANDATORY: Allows the browser to accept cookies
   methods: ["GET", "POST", "PUT", "DELETE"]
 }));
@@ -35,6 +36,7 @@ app.use("/api/v2/product",product);
 app.use("/api/v2/event",event);
 app.use("/api/v2/coupoun",coupounCode);
 app.use("/api/v2/payment",Payment);
+app.use("/api/v2/order",order);
 
 console.log(process.env.DB_URL);
 app.use(ErrorHnadler);

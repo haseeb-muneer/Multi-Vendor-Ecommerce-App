@@ -4,6 +4,9 @@ import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import axios from "axios";
+import { server } from "../../server";
+import { toast } from "react-toastify";
 import styles from "../../styles/styles";
 import {
   CardNumberElement,
@@ -25,9 +28,64 @@ function Payment() {
     const orderData = JSON.parse(localStorage.getItem("latestOrder"));
     setOrderData(orderData);
   }, []);
-
+  const paymentData = {
+    amount: Math.round(orderData?.totalPrice * 100),
+  };
   const paymentHandler = async (e) => {
     e.preventDefault();
+    try{
+     const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const { data } = await axios.post(
+        `${server}/payment/process`,
+        paymentData,
+        config
+      );
+         const client_secret = data.client_secret;
+         if (!stripe || !elements) return;
+
+     const result = await stripe.confirmCardPayment(client_secret, {
+        payment_method: {
+          card: elements.getElement(CardNumberElement),
+        },
+      });
+        if (result.error) {
+        toast.error(result.error.message);
+      } else {
+        if (result.paymentIntent.status === "succeeded") {
+          order.paymnentInfo = {
+            id: result.paymentIntent.id,
+            status: result.paymentIntent.status,
+            type: "Credit Card",
+          };   
+          await axios
+            .post(`${server}/order/create-order`, order, config)
+            .then((res) => {
+              setOpen(false);
+              navigate("/order/success");
+              toast.success("Order successful!");
+              localStorage.setItem("cartItems", JSON.stringify([]));
+              localStorage.setItem("latestOrder", JSON.stringify([]));
+              window.location.reload();
+            });
+        }
+      }
+
+    }catch(error){
+   toast.error(error);
+    }
+
+  };
+
+ const order = {
+    cart: orderData?.cart,
+    shippingAddress: orderData?.shippingAddress,
+    user: user && user,
+    totalPrice: orderData?.totalPrice,
   };
   const cashOnDeliveryHandler = async (e) => {
     e.preventDefault();
@@ -35,9 +93,7 @@ function Payment() {
   const onApprove=async(data,actions)=>{
 
   }
-  const paymentData={
-    amount:Math.round(orderData?.totalPrice *100)
-  }
+  
   const createOrder=()=>{
 
   }
@@ -99,7 +155,7 @@ const PaymentInfo = ({ user,
                   <label className="block pb-2">Name On Card</label>
                   <input
                     required
-                    placeholder={user && user.name}
+                    placeholder={user && user.fullName}
                     className={`${styles.input} !w-[95%] text-[#444]`}
                     value={user && user.name}
                   />
@@ -111,7 +167,7 @@ const PaymentInfo = ({ user,
                     options={{
                       style: {
                         base: {
-                          fontSize: "19px",
+                          fontSize: "17px",
                           lineHeight: 1.5,
                           color: "#444",
                         },
@@ -136,7 +192,7 @@ const PaymentInfo = ({ user,
                     options={{
                       style: {
                         base: {
-                          fontSize: "19px",
+                          fontSize: "17px",
                           lineHeight: 1.5,
                           color: "#444",
                         },
@@ -158,7 +214,7 @@ const PaymentInfo = ({ user,
                     options={{
                       style: {
                         base: {
-                          fontSize: "19px",
+                          fontSize: "17px",
                           lineHeight: 1.5,
                           color: "#444",
                         },
@@ -183,6 +239,7 @@ const PaymentInfo = ({ user,
           </div>
         ) : null}
       </div>
+      
     </div>
   );
 };

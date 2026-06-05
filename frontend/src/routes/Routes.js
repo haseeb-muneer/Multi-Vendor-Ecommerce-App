@@ -15,6 +15,7 @@ export { default as SellerActivationPage } from "../pages/SellerActivationPage.j
 export { default as ShopLoginPage } from "../pages/ShopLoginPage.jsx";
 export { default as CheckoutPage } from "../pages/CheckoutPage.jsx";
 export { default as PaymentPage } from "../pages/PaymentPage.jsx";
+export { default as OrderSuccessPage } from "../pages/OrderSuccessPage.jsx";
 
 
     
