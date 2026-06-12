@@ -45,6 +45,10 @@ const ShopSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+   availableBalance: {
+    type: Number,
+    default: 0,
+  },
  description:{
     type:String,
  },
@@ -52,10 +56,11 @@ const ShopSchema = new mongoose.Schema({
   resetPasswordTime: Date,
 });
 //  Hash password
-ShopSchema.pre("save", async function (next) {
+ShopSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    next();
+    return;
   }
+
   this.password = await bcrypt.hash(this.password, 10);
 });
 

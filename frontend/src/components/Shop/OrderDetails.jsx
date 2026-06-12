@@ -12,7 +12,7 @@ function OrderDetails() {
   const { orders, isLoading } = useSelector((state) => state.order);
   const { seller } = useSelector((state) => state.seller);
   const dispatch = useDispatch();
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("Processing");
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -20,7 +20,7 @@ function OrderDetails() {
     dispatch(getAllOrdersOfShop(seller._id));
   }, [dispatch]);
 
-  // Bug 1: use .find() instead of .filter() — filter returns an array
+
   const data = orders && orders.find((item) => item._id === id);
 
   const orderUpdateHandler = async (e) => {
