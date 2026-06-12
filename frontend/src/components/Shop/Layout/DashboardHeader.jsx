@@ -56,9 +56,9 @@ function DashboardHeader() {
               className="mnx-5 cursor-pointer"
             />
           </Link>
-            <Link to={`/shop/${seller._id}`}>
+            <Link to={`/shop/${seller?._id}`}>
             <img
-              src={`${backend_url}${seller.avatar}`}
+              src={`${backend_url}/${seller.avatar}`}
               alt=""
               className="w-[50px] h-[50px] rounded-full object-cover"
             />

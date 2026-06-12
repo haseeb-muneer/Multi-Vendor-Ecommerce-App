@@ -21,6 +21,7 @@ import { RxCross1 } from "react-icons/rx";
 import { Country, State } from "country-state-city";
 import axios from "axios";
 import { server } from "../../server";
+import { getAllOrdersOfUser } from "../../redux/actions/order";
 const ProfileContent = ({ active, setActive }) => {
   const { user, error, successMessage } = useSelector((state) => state.user);
   const [fullName, setFullName] = useState(user && user.fullName);
@@ -180,27 +181,28 @@ const ProfileContent = ({ active, setActive }) => {
   );
 };
 const AllOrders = () => {
-  const orders = [
-    {
-      _id: "7463hvbfbhfbrtr28820221",
-      orderItems: [{ name: "Iphone 14 pro max" }],
-      totalPrice: 120,
-      orderStatus: "Processing",
-    },
-  ];
+const { user } = useSelector((state) => state.user);
+  const { orders } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllOrdersOfUser(user._id));
+  }, []);
+
+
+
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
 
-    {
-      field: "status",
-      headerName: "Status",
-      minWidth: 130,
-      flex: 0.7,
-      cellClassName: (params) => {
-        return params.row.status === "Delivered" ? "greenColor" : "redColor";
-      },
-    },
-
+   {
+  field: "status",
+  headerName: "Status",
+  minWidth: 130,
+  flex: 0.7,
+  cellClassName: (params) => {
+    return params.row.status === "Delivered" ? "greenColor" : "redColor";
+  },
+},
     {
       field: "itemsQty",
       headerName: "Items Qty",
@@ -218,16 +220,16 @@ const AllOrders = () => {
     },
 
     {
-      field: " ", // ✅ avoid empty/space field names
+      field: " ",
       flex: 1,
       minWidth: 150,
-      headerName: " ",
+      headerName: "",
       type: "number",
       sortable: false,
       renderCell: (params) => {
         return (
           <>
-            <Link to={`/order/${params.id}`}>
+            <Link to={`/user/order/${params.id}`}>
               <Button>
                 <AiOutlineArrowRight size={20} />
               </Button>
@@ -237,14 +239,16 @@ const AllOrders = () => {
       },
     },
   ];
+
   const row = [];
+
   orders &&
     orders.forEach((item) => {
       row.push({
         id: item._id,
-        itemsQty: item.orderItems.length,
-        total: "US$" + item.totalPrice,
-        status: item.orderStatus,
+        itemsQty: item.cart.length,
+        total: "US$ " + item.totalPrice,
+        status: item.status,
       });
     });
 
@@ -260,6 +264,7 @@ const AllOrders = () => {
     </div>
   );
 };
+
 const AllRefundOrders = () => {
   const orders = [
     {

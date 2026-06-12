@@ -49,17 +49,68 @@ router.post(
     }
   })
 );
-router.get("/get-all-orders/:userId" , catchAsyncErrors(async(req,res,next)=>{
-  try{
-  const orders=(await Order.find({"user._id":req.params.userId})).toSorted({
-    createdAt:-1,
+// get all orders of user
+router.get(
+  "/get-all-orders/:userId",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const orders = await Order.find({"user._id": req.params.userId}).sort({
+        createdAt: -1,
+      });
+
+      res.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (error) {
+        console.log("ORDER FETCH ERROR:", error.message); // 👈 add this
+      return next(new ErrorHandler(error.message, 500));
+    }
   })
-  res.status(200).json({
-    success:true,
-    orders,
+);
+// get all orders of seller
+router.get(
+  "/get-seller-all-orders/:shopId",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const orders = await Order.find({
+        "cart.shopId": req.params.shopId,
+      }).sort({
+        createdAt: -1,
+      });
+
+      res.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
   })
-  }catch(error){
-    return next(new ErrorHandler(error.message, 500));
-  }
-}))
+);
+// router.put(
+//   "/order-refund/:id",
+//   catchAsyncErrors(async (req, res, next) => {
+//     try {
+//       const order = await Order.findById(req.params.id);
+
+//       if (!order) {
+//         return next(new ErrorHandler("Order not found with this id", 400));
+//       }
+
+//       order.status = req.body.status;
+
+//       await order.save({ validateBeforeSave: false });
+
+//       res.status(200).json({
+//         success: true,
+//         order,
+//         message: "Order Refund Request successfully!",
+//       });
+//     } catch (error) {
+//       return next(new ErrorHandler(error.message, 500));
+//     }
+//   })
+// );
+
 module.exports = router;
