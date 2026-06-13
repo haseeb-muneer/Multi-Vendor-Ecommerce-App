@@ -36,8 +36,20 @@ function UserOrderDetails() {
       toast.error(error.response.data.message);
     })
   };
-  const reviewHandler=()=>{
-
+  const reviewHandler=async (e)=>{
+    await axios.put(`${server}/product/create-new-review` , {
+      user,
+      rating , comment , productId:selectedItem?._id,
+      orderId:id,
+    }, {withCredentials:true}).then((res)=>{
+     toast.success(res.data.message);
+     dispatch(getAllOrdersOfUser(user._id));
+     setComment("");
+     setRating(null);
+     setOpen(false);
+    }).catch((error)=>{
+      toast.error(error);
+    })
   }
 
   return (
@@ -80,7 +92,7 @@ function UserOrderDetails() {
                 US${item.discountPrice} x {item.qty}
               </h5>
             </div>
-            {
+            {!item.isReviewed && 
                 data?.status==="Delivered" && (
                     <div onClick={()=>setOpen(true) || setSelectedItem(item)} className={`${styles.button} text-[#fff]`}>Write a review</div>
                 )
@@ -91,9 +103,9 @@ function UserOrderDetails() {
         {/* review pop up */}
 
         {open && (
-             <div className="w-full fixed top-0 left-0 h-screen bg-[#0005] z-50 flex items-center justify-center">
-               <div className="w-[50%] h-min bg-[#fff] shadow rounded-md p-3">
-                  <div className="w-full flex justify-end p-3">
+             <div className="fixed inset-0 bg-[#0005] z-50 flex items-center justify-center overflow-y-auto p-4">
+               <div className="w-full md:w-[50%] max-h-[90vh] overflow-y-auto bg-white shadow rounded-md p-3">
+                  <div className="w-full flex justify-end">
               <RxCross1
                 size={30}
                 onClick={() => setOpen(false)}

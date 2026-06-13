@@ -169,7 +169,9 @@ console.log("delivered is excuted")
         const product = await Product.findById(id);
 
         product.stock -= qty;
+        console.log(product.stock)
         product.sold_out += qty;
+        console.log(product.sold_out);
 
         await product.save({ validateBeforeSave: false });
       }

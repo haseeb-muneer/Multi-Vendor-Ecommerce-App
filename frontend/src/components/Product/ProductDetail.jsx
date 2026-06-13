@@ -13,12 +13,17 @@ import { getAllProductShop } from "../../redux/actions/product";
 import {addToCartItem} from "../../redux/actions/cart";
 import {toast} from "react-toastify";
 import { addToWishlistItem, removeFromWishlistItem } from "../../redux/actions/wishlist";
+import Ratings from "./Ratings";
 function ProductDetail({ data }) {
    const {wishlist}=useSelector((state)=>state.wishlist);
   const {cart}=useSelector((state)=>state.cart);
   const dispatch=useDispatch();
   const [active, setActive] = useState(1);
   const {products}=useSelector((state)=>state.products);
+  const TotalproductReviewLengthofShop=products && products.reduce((acc,product)=>acc + product.reviews.length , 0) ;
+  // each product -> all review of each product -> ratings of each review of that product 
+    const TotalRatingofShop=products && products.reduce((acc,product)=>acc+product.reviews.reduce((sum , review)=>sum + review.rating , 0),0);
+    const avgRatingofShop=TotalRatingofShop/TotalproductReviewLengthofShop || 0;
   useEffect(()=>{
     if(data){
     dispatch(getAllProductShop(data && data.shop._id));
@@ -171,7 +176,7 @@ function ProductDetail({ data }) {
                     </h3>
                     </Link>
                     <h5 className="pb-3 text-[15px]">
-                      (4/5) Ratings
+                      ({avgRatingofShop}/5) Ratings
                     </h5>
                   </div>
                   <div
@@ -186,7 +191,7 @@ function ProductDetail({ data }) {
               </div>
             </div>
           </div>
-          <ProductDetailInfo data={data} products={products} />
+          <ProductDetailInfo data={data} products={products} TotalproductReviewLengthofShop={TotalproductReviewLengthofShop} avgRatingofShop={avgRatingofShop} />
           <br />
           <br />
         </div>
@@ -195,7 +200,7 @@ function ProductDetail({ data }) {
   );
 }
 
-const ProductDetailInfo = ({ data , products }) => {
+const ProductDetailInfo = ({ data , products  , TotalproductReviewLengthofShop , avgRatingofShop}) => {
   const [active, setActive] = useState(1);
   return (
     <div className="bg-[#f5f6fb] px-3 800px:px-10 rounded ">
@@ -242,9 +247,31 @@ const ProductDetailInfo = ({ data , products }) => {
           
         </>
       ) : null}
-      {active === 2 ? (
-        <div className="w-full flex items-center justify-center min-h-[40vh]">
-          <p>No Reviews yet!</p>
+    {active === 2 ? (
+        <div className="w-full min-h-[40vh] flex flex-col items-center py-3 overflow-y-scroll">
+          {data &&
+            data.reviews.map((item, index) => (
+              <div className="w-full flex my-2">
+                <img
+                  src={`${backend_url}/${item.user.avatar}`}
+                  alt=""
+                  className="w-[50px] h-[50px] rounded-full"
+                />
+                <div className="pl-2 ">
+                  <div className="w-full flex items-center">
+                    <h1 className="font-[500] mr-3">{item.user.fullName}</h1>
+                    <Ratings rating={data?.ratings} />
+                  </div>
+                  <p>{item.comment}</p>
+                </div>
+              </div>
+            ))}
+
+          <div className="w-full flex justify-center">
+            {data && data.reviews.length === 0 && (
+              <h5>No Reviews have for this product!</h5>
+            )}
+          </div>
         </div>
       ) : null}
       {active === 3 && (
@@ -260,7 +287,7 @@ const ProductDetailInfo = ({ data , products }) => {
               <div className="pl-3">
                 <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
                 <h5 className="pb-3 text-[15px]">
-                  (4/5) Ratings
+                  ({avgRatingofShop}/5) Ratings
                 </h5>
               </div>
             </div></Link>
@@ -277,7 +304,7 @@ const ProductDetailInfo = ({ data , products }) => {
                 Total Products <span className="font-[500]">{products && products.length}</span>
               </h5>
               <h5 className="font-[600] pt-3">
-                Total Reviews <span className="font-[500]">1,223</span>
+                Total Reviews <span className="font-[500]">{TotalproductReviewLengthofShop}</span>
               </h5>
               <Link to="/">
                 <div
