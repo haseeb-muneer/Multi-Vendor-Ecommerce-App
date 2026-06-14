@@ -8,3 +8,4 @@ export { default as ShopAllCoupouns} from "../pages/Shop/ShopAllCoupouns.jsx";
 export { default as ShopAllOrders} from "../pages/Shop/ShopAllOrders.jsx";
 export { default as ShopOrderDetails} from "../pages/Shop/ShopOrderDetails.jsx";
 export { default as OrderDetailsPage} from "../pages/Shop/OrderDetailsPage.jsx";
+export { default as ShopAllRefunds} from "../pages/Shop/ShopAllRefunds.jsx";
