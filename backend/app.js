@@ -21,7 +21,7 @@ const message=require("./controller/Message");
 const path =require("path");
 app.use("/",express.static("uploads"));
 app.use(cors({
-  origin: "http://localhost:3000", // Allow ONLY your frontend
+ origin: process.env.FRONTEND_URL || "http://localhost:3000", // Allow ONLY your frontend
   credentials: true,                // MANDATORY: Allows the browser to accept cookies
   methods: ["GET", "POST", "PUT", "DELETE"]
 }));
@@ -32,6 +32,9 @@ app.use((req, res, next) => {
 });
 app.use(bodyParser.urlencoded({ extended: true , limit:"50mb" }));
 app.use(cookieParser());
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "API is running" });
+});
 app.use("/api/v2/user",user);
 app.use("/api/v2/shop",shop);
 app.use("/api/v2/product",product);
