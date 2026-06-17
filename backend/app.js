@@ -16,6 +16,8 @@ const product=require("./controller/Product");
 const coupounCode=require("./controller/CoupounCode");
 const Payment=require("./controller/Payment");
 const order=require("./controller/order");
+const conversation=require("./controller/Conversation");
+const message=require("./controller/Message");
 const path =require("path");
 app.use("/",express.static("uploads"));
 app.use(cors({
@@ -37,6 +39,8 @@ app.use("/api/v2/event",event);
 app.use("/api/v2/coupoun",coupounCode);
 app.use("/api/v2/payment",Payment);
 app.use("/api/v2/order",order);
+app.use("/api/v2/conversation",conversation);
+app.use("/api/v2/message",message);
 
 console.log(process.env.DB_URL);
 app.use(ErrorHnadler);

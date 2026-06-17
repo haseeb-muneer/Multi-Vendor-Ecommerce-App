@@ -62,7 +62,7 @@ function DashBoardHero() {
       renderCell: (params) => {
         return (
           <>
-            <Link to={`/dashboard/order/${params.id}`}>
+            <Link to={`/order/${params.id}`}>
               <Button>
                 <AiOutlineArrowRight size={20} />
               </Button>

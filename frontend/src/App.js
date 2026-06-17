@@ -4,8 +4,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer, Bounce } from 'react-toastify'; // Added Bounce here
 import 'react-toastify/dist/ReactToastify.css'; // Added the CSS import
 import axios from "axios";
-import { LoginPage, SignupPage, ActivationPage , HomePage , ProductPage , BestSellingPage , EventPage , FAQPage , ProductDetailsPage  , ProfilePage , ShopCreatePage , SellerActivationPage  , ShopLoginPage  , CheckoutPage , PaymentPage , OrderSuccessPage , TrackOrderPage  } from "./routes/Routes";
-import { ShopHomePage  , ShopCreateProduct , ShopAllProduct , ShopCreateEvents , ShopAllEvents , ShopAllCoupouns , ShopAllOrders , ShopOrderDetails , OrderDetailsPage , ShopAllRefunds } from "./routes/ShopRoutes";
+import { LoginPage, SignupPage, ActivationPage , HomePage , ProductPage , BestSellingPage , EventPage , FAQPage , ProductDetailsPage  , ProfilePage , ShopCreatePage , SellerActivationPage  , ShopLoginPage  , CheckoutPage , PaymentPage , OrderSuccessPage , TrackOrderPage , UserInboxPage  } from "./routes/Routes";
+import { ShopHomePage  , ShopCreateProduct , ShopAllProduct , ShopCreateEvents , ShopAllEvents , ShopAllCoupouns , ShopAllOrders , ShopOrderDetails , OrderDetailsPage , ShopAllRefunds , ShopSettingPage , ShopWithdrawMoneyPage , ShopInboxPage } from "./routes/ShopRoutes";
 import { ShopDashboardPage } from "./routes/ShopRoutes";
 import { server } from "./server";
 import { toast } from 'react-toastify';
@@ -125,6 +125,24 @@ function App() {
             <ShopAllRefunds/>
           </SellerProtectedRoute>
         } />
+        <Route path="/setting" element={
+          <SellerProtectedRoute >
+            <ShopSettingPage/>
+          </SellerProtectedRoute>
+        } />
+        <Route path="/dashboard-withdraw-money" element={
+          <SellerProtectedRoute >
+            <ShopWithdrawMoneyPage/>
+          </SellerProtectedRoute>
+        } />
+          <Route
+          path="/dashboard-messages"
+          element={
+            <SellerProtectedRoute>
+              <ShopInboxPage />
+            </SellerProtectedRoute>
+          }
+        />
         <Route
           path="/checkout"
           element={
@@ -133,6 +151,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute>
+              <UserInboxPage />
+            </ProtectedRoute>
+          }
+        />
+        
         <Route
           path="/user/order/:id"
           element={

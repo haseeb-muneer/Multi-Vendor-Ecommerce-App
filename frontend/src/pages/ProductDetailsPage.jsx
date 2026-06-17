@@ -20,10 +20,10 @@ const [searchParams] = useSearchParams();
         // const productName=name.replace(/-/g," ");
        useEffect(() => {
     if (eventData!==null) {
-        const data=allEvents.find((i)=>i._id===id);
+        const data=allEvents?.find((i)=>i._id===id);
         setData(data);
     }else{
-      const data = allProducts.find((i) => i._id===id);
+      const data = allProducts?.find((i) => i._id===id);
         
         setData(data);
     }

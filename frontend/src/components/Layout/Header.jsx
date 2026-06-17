@@ -20,13 +20,14 @@ import { RxCross1 } from "react-icons/rx";
 
 function Header({ activeHeading }) {
   const { isAuthenticated, user } = useSelector((state) => state.user);
-  const {allProducts}=useSelector((state)=>state.products);
+  const { allProducts } = useSelector((state) => state.products);
+  const { isSeller } = useSelector((state) => state.seller);
   // console.log(user);
   // console.log(`${backend_url}${user.avatar}`);
   console.log(isAuthenticated);
-  const {cart}=useSelector((state)=>state.cart);
-  const {wishlist}=useSelector((state)=>state.wishlist);
-  
+  const { cart } = useSelector((state) => state.cart);
+  const { wishlist } = useSelector((state) => state.wishlist);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
@@ -34,9 +35,16 @@ function Header({ activeHeading }) {
   const [openCart, setOpenCart] = useState(false);
   const [openWishList, setOpenWishList] = useState(false);
   const [open, setOpen] = useState(false);
+
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
+
+    if (!term.trim()) {
+      setSearchData(null);
+      return;
+    }
+
     const filteredProduct =
       allProducts &&
       allProducts.filter((product) =>
@@ -44,6 +52,7 @@ function Header({ activeHeading }) {
       );
     setSearchData(filteredProduct);
   };
+
   window.addEventListener("scroll", () => {
     if (window.scrollY > 70) {
       setActive(true);
@@ -79,9 +88,8 @@ function Header({ activeHeading }) {
               <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
                 {searchData &&
                   searchData.map((i, index) => {
-                
                     return (
-                      <Link to={`/product/${i._id}`}>
+                      <Link to={`/product/${i._id}`} key={i._id || index}>
                         <div className="w-full flex items-start py-2">
                           <img
                             src={`${backend_url}${i.images[0]}`}
@@ -97,9 +105,9 @@ function Header({ activeHeading }) {
             ) : null}
           </div>
           <div className={`${styles.button}`}>
-            <Link to="/shop-create">
+            <Link to={`${isSeller ? "/dashboard" : "/shop-create"}`}>
               <h1 className="text-[#fff] flex items-center">
-                Become Seller
+                {isSeller ? "Go Dashboard" : "Become Seller"}{" "}
                 <IoIosArrowForward className="ml-1" />
               </h1>
             </Link>
@@ -187,9 +195,11 @@ function Header({ activeHeading }) {
         </div>
       </div>
       {/* Mobile Header */}
-      <div className={`w-full h-[60px] bg-[#fff] z-50 top-0 left-0 shadow-sm 800px:hidden ${
+      <div
+        className={`w-full h-[60px] bg-[#fff] z-50 top-0 left-0 shadow-sm 800px:hidden ${
           active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
-        }`}>
+        }`}
+      >
         <div className="w-full flex items-center justify-between">
           <div>
             <BiMenuAltLeft
@@ -229,60 +239,88 @@ function Header({ activeHeading }) {
                     </span>
                   </div>
                 </div>
-                <RxCross1 size={30} className="ml-4 mt-5" onClick={()=>setOpen(false)}/>
+                <RxCross1
+                  size={30}
+                  className="ml-4 mt-5"
+                  onClick={() => setOpen(false)}
+                />
               </div>
               <div className="my-8 w-[92%] m-auto h-[40px] relative">
-                <input type="search" placeholder="Search Products..." className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md" value={searchTerm} onChange={handleSearchChange}/>
-                {searchData && (
+                <input
+                  type="search"
+                  placeholder="Search Products..."
+                  className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+                {searchData && searchData.length !== 0 && (
                   <div className="absolute bg-[#fff] z-10 shadow w-full left-0 p-3">
-                    {searchData.map((i)=>{
-                      const d=i.name;
-                      const Product_name=d.replace(/\s+/g , "-");
+                    {searchData.map((i, index) => {
+                      const d = i.name;
+                      const Product_name = d.replace(/\s+/g, "-");
                       return (
-                      <Link to={`/product/${Product_name}`}>
-                      <div className="flex items-center">
-                        <img src={i.image_Url[0].url} alt="" className="w-[50px] mr-2"/>
-                        <h5>{i.name}</h5>
-                      </div>
-                      </Link>)
+                        <Link
+                          to={`/product/${Product_name}`}
+                          key={i._id || index}
+                        >
+                          <div className="flex items-center">
+                            <img
+                              src={i.image_Url[0].url}
+                              alt=""
+                              className="w-[50px] mr-2"
+                            />
+                            <h5>{i.name}</h5>
+                          </div>
+                        </Link>
+                      );
                     })}
                   </div>
                 )}
               </div>
               <div>
-                <Navbar active={activeHeading}/>
-                 <div className={`${styles.button} ml-4 !rounded-[4px]`}>
-            <Link to="/shop-create">
-              <h1 className="text-[#fff] flex items-center">
-                Become Seller
-                <IoIosArrowForward className="ml-1" />
-              </h1>
-            </Link>
-          </div>
-          </div>
-          <br/>
-          <br/>
-          <br/>
-          <div className="flex w-full justify-center">
-            {isAuthenticated ? (
-              <div>
-                <Link to="/profile">
-                <img src={`${backend_url}${user.avatar}`} alt="" className="w-[60px] h-[60px] rounded-full border-[3px] border-[#0eae88]"/>
-</Link>
+                <Navbar active={activeHeading} />
+                <div className={`${styles.button} ml-4 !rounded-[4px]`}>
+                  <Link to="/shop-create">
+                    <h1 className="text-[#fff] flex items-center">
+                      Become Seller
+                      <IoIosArrowForward className="ml-1" />
+                    </h1>
+                  </Link>
+                </div>
               </div>
-            ) : (
-              <>
-              <Link to="/login" className="text-[18px] pr-[10px] text-[#000000b7]">Login /
-              </Link>
-              <Link to="/sign-up" className="text-[18px] text-[#000000b7]">Signup
-              </Link>
-              </>
-            ) }
+              <br />
+              <br />
+              <br />
+              <div className="flex w-full justify-center">
+                {isAuthenticated ? (
+                  <div>
+                    <Link to="/profile">
+                      <img
+                        src={`${backend_url}${user.avatar}`}
+                        alt=""
+                        className="w-[60px] h-[60px] rounded-full border-[3px] border-[#0eae88]"
+                      />
+                    </Link>
+                  </div>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="text-[18px] pr-[10px] text-[#000000b7]"
+                    >
+                      Login /
+                    </Link>
+                    <Link
+                      to="/sign-up"
+                      className="text-[18px] text-[#000000b7]"
+                    >
+                      Signup
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
-
-            </div>
-            </div>
-          
         )}
       </div>
     </>

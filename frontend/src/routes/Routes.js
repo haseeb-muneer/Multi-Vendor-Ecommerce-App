@@ -17,6 +17,7 @@ export { default as CheckoutPage } from "../pages/CheckoutPage.jsx";
 export { default as PaymentPage } from "../pages/PaymentPage.jsx";
 export { default as OrderSuccessPage } from "../pages/OrderSuccessPage.jsx";
 export { default as TrackOrderPage } from "../pages/TrackOrderPage.jsx";
+export { default as UserInboxPage } from "../pages/UserInboxPage.jsx";
 
 
     

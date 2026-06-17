@@ -9,3 +9,6 @@ export { default as ShopAllOrders} from "../pages/Shop/ShopAllOrders.jsx";
 export { default as ShopOrderDetails} from "../pages/Shop/ShopOrderDetails.jsx";
 export { default as OrderDetailsPage} from "../pages/Shop/OrderDetailsPage.jsx";
 export { default as ShopAllRefunds} from "../pages/Shop/ShopAllRefunds.jsx";
+export { default as ShopSettingPage} from "../pages/Shop/ShopSettingPage.jsx";
+export { default as ShopWithdrawMoneyPage} from "../pages/Shop/ShopWithdrawMoneyPage.jsx";
+export { default as ShopInboxPage} from "../pages/Shop/ShopInboxPage.jsx";
