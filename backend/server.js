@@ -5,9 +5,9 @@ process.on("uncaughtException",(err)=>{
     console.log(`Error : ${err.message}`);
     console.log("Shutting down the server for handling uncaiught exception");
 })
-// if(process.env.NODE_ENV!=="PRODUCTION"){
-//     require("dotenv").config({path:'config/.env'});
-// }
+if(process.env.NODE_ENV!=="PRODUCTION"){
+    require("dotenv").config({path:'config/.env'});
+}
 connectDatabase();
 
 cloudinary.v2.config({
