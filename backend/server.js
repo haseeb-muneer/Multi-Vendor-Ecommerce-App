@@ -1,30 +1,39 @@
-const app=require("./app");
+const app = require("./app");
 const cloudinary = require("cloudinary");
-const connectDatabase = require("./db/Database");
-process.on("uncaughtException",(err)=>{
-    console.log(`Error : ${err.message}`);
-    console.log("Shutting down the server for handling uncaiught exception");
-})
-if(process.env.NODE_ENV!=="PRODUCTION"){
-    require("dotenv").config({path:'config/.env'});
-}
-console.log("DB_URL exists:", !!process.env.DB_URL);
-connectDatabase();
 
+// Handle uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting down due to uncaught exception");
+  process.exit(1);
+});
+
+// Load env variables
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config({ path: "config/.env" });
+}
+
+// Cloudinary config
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const server=app.listen(`${process.env.PORT}`,()=>{
-    console.log(`server is listening on port http://localhost:${process.env.PORT}`);
-})
-process.on("unhandledRejection",(err)=>{
-    console.log(`shutting down the server for handling ${err.message}`);
-    console.log(`shutting down the server for handling unhandled promise rejection`);
-    server.close(()=>{
-        process.exit(1);
-    })
+// Only start local server outside Vercel
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 8000;
 
-})
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+
+  process.on("unhandledRejection", (err) => {
+    console.log(`Error: ${err.message}`);
+    console.log("Shutting down due to unhandled promise rejection");
+
+    server.close(() => {
+      process.exit(1);
+    });
+  });
+}
