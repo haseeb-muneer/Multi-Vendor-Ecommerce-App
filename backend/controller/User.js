@@ -93,6 +93,7 @@ router.post("/activation",catchAsyncErrors(async (req,res,next)=>{
  }
 }))
 router.post("/login-user",catchAsyncErrors(async(req,res,next)=>{
+    console.log("LOGIN ROUTE HIT");
     try{
     const {email , password}=req.body;
     if(!email || !password){
