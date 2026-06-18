@@ -31,6 +31,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       process.env.FRONTEND_URL,
+      "https://multi-vendor-ecommerce-app-q7yj.vercel.app"
     ].filter(Boolean),
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
