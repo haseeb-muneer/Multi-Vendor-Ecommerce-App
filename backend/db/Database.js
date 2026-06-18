@@ -1,8 +1,19 @@
-const mongoose=require("mongoose");
-const connectDatabase=()=>{
-    mongoose.connect(process.env.DB_URL ).then((data)=>{
-        console.log(`Mongodb is connected with ${data.connection.host}`);
-    }).catch((err)=>console.log(err));
-}
+const mongoose = require("mongoose");
 
-module.exports=connectDatabase;
+const connectDatabase = async () => {
+  try {
+    if (mongoose.connection.readyState >= 1) {
+      return;
+    }
+
+    const data = await mongoose.connect(process.env.DB_URL);
+
+    console.log(
+      `Mongodb is connected with ${data.connection.host}`
+    );
+  } catch (error) {
+    console.log("MongoDB Error:", error);
+  }
+};
+
+module.exports = connectDatabase;
