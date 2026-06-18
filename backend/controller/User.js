@@ -128,20 +128,29 @@ router.get("/getuser" , isAuthenticated , catchAsyncErrors(async (req,res ,next)
         return next(new ErrorHandler(error.message , 500));
     }
 }))
-router.get("/logout" , isAuthenticated , catchAsyncErrors(async (req,res,next)=>{
-    try{
-    res.cookie("token" , null , {
-        expires:new Date(Date.now()),
-        httpOnly:true,
-    })
-    res.status(201).json({
-        success:true,
-        message:"Log out successfull!",
-    })
-    }catch(error){
-        return next(new ErrorHandler(error.message , 500))
+router.get(
+  "/logout",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const isProd = process.env.NODE_ENV === "production";
+
+      res.cookie("token", "", {
+        expires: new Date(0),
+        httpOnly: true,
+        sameSite: isProd ? "none" : "lax",
+        secure: isProd,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Log out successful!",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
     }
-}));
+  })
+);
 router.put(
   "/update-user-info",
   isAuthenticated,
