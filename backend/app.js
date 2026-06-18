@@ -1,3 +1,4 @@
+console.log("APP.JS LOADED");
 const express = require("express");
 const ErrorHnadler = require("./middleware/error");
 const cookieParser=require("cookie-parser");
