@@ -5,6 +5,7 @@ const sendToken = (user, statusCode, res) => {
 
   // options for cookie
   const isProd = process.env.NODE_ENV === "production";
+  console.log(process.env.NODE_ENV);
   const options = {
     expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     httpOnly: true,
