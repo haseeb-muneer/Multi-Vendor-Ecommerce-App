@@ -8,6 +8,7 @@ process.on("uncaughtException",(err)=>{
 if(process.env.NODE_ENV!=="PRODUCTION"){
     require("dotenv").config({path:'config/.env'});
 }
+console.log("DB_URL exists:", !!process.env.DB_URL);
 connectDatabase();
 
 cloudinary.v2.config({
