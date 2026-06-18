@@ -12,6 +12,7 @@ const Shop =require("../model/ShopModel");
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const shopToken = require('../utils/sendShopToken');
 const cloudinary = require("cloudinary");
+const isProd = process.env.NODE_ENV === "production";
 router.post("/create-shop" , upload.single("file") , async (req,res,next)=>{
    try{
    const { email}=req.body;
@@ -167,10 +168,11 @@ router.get(
   catchAsyncErrors(async (req, res, next) => {
     try {
       res.cookie("seller_token", null, {
-        expires: new Date(Date.now()),
+         expires: new Date(0),
         httpOnly: true,
-        sameSite: "none",
-        secure: true,
+        sameSite: isProd ? "none" : "lax",
+        secure: isProd,
+        path: "/",
       });
       res.status(201).json({
         success: true,
