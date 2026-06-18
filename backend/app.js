@@ -7,35 +7,58 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const connectDatabase = require("./db/Database");
 
-const app = express();
+// Handling uncaught Exceptions
+process.on("uncaughtException", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting down the server for handling uncaught exception");
+});
 
-// Load env variables
+
+// config
 if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config({ path: "config/.env" });
+  require("dotenv").config({
+    path: "./config/.env",
+  });
 }
 
 // Connect MongoDB
 connectDatabase();
 
+const app = express();
 // Middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
+
+const isProd = process.env.NODE_ENV === "production";
+const defaultOrigins = isProd
+  ? [
+      "https://multi-vendor-ecommerce-app-q7yj.vercel.app",
+      
+    ]
+  : ["http://localhost:8000"];
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",").map((origin) => origin.trim())
+  : defaultOrigins;
+
+
 // Static files
 app.use("/", express.static("uploads"));
 
-// CORS
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      process.env.FRONTEND_URL,
-      "https://multi-vendor-ecommerce-app-q7yj.vercel.app"
-    ].filter(Boolean),
+    origin: (origin, callback) => {
+      if (!origin) {
+        return callback(null, true);
+      }
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
+  }),
 );
 
 // Request logger
@@ -74,5 +97,10 @@ app.use("/api/v2/message", message);
 
 // Error middleware
 app.use(ErrorHandler);
+// Unhandled promise rejection
+process.on("unhandledRejection", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log("Shutting down for unhandled promise rejection");
+});
 
 module.exports = app;
