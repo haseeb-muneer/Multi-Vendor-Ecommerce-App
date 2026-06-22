@@ -100,10 +100,14 @@ router.post("/login-user",catchAsyncErrors(async(req,res,next)=>{
     if(!email || !password){
         return next(new ErrorHandler("please provide the all fields!" , 400));
     }
-        console.log("DB Name:", User.db.name);
-console.log("Searching Email:", email);
-        const users = await User.find().limit(5);
-console.log("Users in DB:", users);
+       
+      console.log("DB Name:", User.db.name);
+
+const count = await User.countDocuments();
+console.log("User Count:", count);
+
+const firstUser = await User.findOne();
+console.log("First User:", firstUser?.email);
     const user=await User.findOne({email}).select("+password");
     if(!user){
         return next(new ErrorHandler("User does not exist!" , 400));
